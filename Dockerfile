@@ -8,7 +8,7 @@ COPY . /app
 
 RUN python -m pip install -r requirements.txt
 
-# default Flask port
-EXPOSE 5000
+# default mesa port
+EXPOSE 8521
 
 CMD ["mesa", "runserver", "./wolf_sheep"]
