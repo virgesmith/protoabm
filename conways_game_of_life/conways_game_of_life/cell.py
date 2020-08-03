@@ -17,13 +17,6 @@ class Cell(Agent):
         # self.state = init_state
         self._nextAge = None
 
-        errors = []
-        if self.model.min_survival_neighbours > self.model.max_survival_neighbours:
-          errors.append("Survival min/max neighbours values are invalid")
-        if self.model.min_birth_neighbours > self.model.max_birth_neighbours:
-          errors.append("Birth min/max neighbours values are invalid")        
-        self.model.logger.value = "\n".join(errors)
-
     @property
     def isAlive(self):
         return self.age != self.DEAD
@@ -61,7 +54,6 @@ class Cell(Agent):
             # dead -> dead
             else:
                 self._nextAge = self.DEAD
-        #print(self)
 
     def __str__(self):
         return "%d,%d: %d" % (self.x, self.y, self.age)

@@ -1,8 +1,8 @@
 
-def _colour(age):
-    return 
-
 _lookup = [ "#FFFFFF", "#00FFFF", "#0000FF", "#FF00FF", "#FF0000", "#FFFF00", "#00FF00", "#000000"]
+
+def cellColour(i):
+    return _lookup[min(i,7)]
 
 def portrayCell(cell):
     """
@@ -13,12 +13,11 @@ def portrayCell(cell):
     """
     assert cell is not None
     return {
-        "Shape": "rect",
-        "w": 1,
-        "h": 1,
+        "Shape": "circle",
+        "r": 1,
         "Filled": "true",
         "Layer": 0,
         "x": cell.x,
         "y": cell.y,
-        "Color": _lookup[min(cell.age,7)],
+        "Color": cellColour(cell.age)
     }

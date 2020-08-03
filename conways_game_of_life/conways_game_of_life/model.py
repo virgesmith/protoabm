@@ -1,17 +1,42 @@
 from mesa import Model
 from mesa.time import SimultaneousActivation
 from mesa.space import Grid
+from mesa.datacollection import DataCollector
 
 from .cell import Cell
 
 
+def get_num_gen1(model):
+    #print(len(model.schedule.agents), len([a.age for a in model.schedule.agents if a.age==1]))
+    return len([a.age for a in model.schedule.agents if a.age==1])
+
+def get_num_gen2(model):
+    return len([a.age for a in model.schedule.agents if a.age==2])
+
+def get_num_gen3(model):
+    return len([a.age for a in model.schedule.agents if a.age==3])
+
+def get_num_gen4(model):
+    return len([a.age for a in model.schedule.agents if a.age==4])
+
+def get_num_gen5(model):
+    return len([a.age for a in model.schedule.agents if a.age==5])
+
+def get_num_gen6(model):
+    return len([a.age for a in model.schedule.agents if a.age==6])
+
+def get_num_gen7plus(model):
+    return len([a.age for a in model.schedule.agents if a.age>=7])
+
+
 class ConwaysGameOfLife(Model):
+    # this ends up in the "About" menu
     """
-    Represents the 2-dimensional array of cells in Conway's
-    Game of Life.
+    Represents the 2-dimensional array of cells in Conway's Game of Life, colour-coded according to age. 
+    Source code at https://github.com/virgesmith/protoabm
     """
 
-    def __init__(self, height, width, initial_proportion, min_survival_neighbours, max_survival_neighbours, min_birth_neighbours, max_birth_neighbours, logger):
+    def __init__(self, height, width, initial_proportion, min_survival_neighbours, max_survival_neighbours, min_birth_neighbours, max_birth_neighbours):
         """
         Create a new playing area of (height, width) cells.
         """
@@ -22,7 +47,24 @@ class ConwaysGameOfLife(Model):
         self.min_birth_neighbours = min_birth_neighbours
         self.max_birth_neighbours = max_birth_neighbours
 
-        self.logger = logger
+        self.log = [] 
+        if self.min_survival_neighbours > self.max_survival_neighbours:
+          self.log.append("ERROR: Survival neighbours min/max values (%d/%d) are invalid" % (self.min_survival_neighbours, self.max_survival_neighbours))
+        if self.min_birth_neighbours > self.max_birth_neighbours:
+          self.log.append("ERROR: Birth neighbours min/max values (%d/%d) are invalid" % (min_birth_neighbours, max_birth_neighbours ))
+        
+        self.datacollector = DataCollector(
+            model_reporters={
+                "1st Gen": get_num_gen1,
+                "2nd Gen": get_num_gen2,
+                "3rd Gen": get_num_gen3,
+                "4th Gen": get_num_gen4,
+                "5th Gen": get_num_gen5,
+                "6th Gen": get_num_gen6,
+                "7th+ Gen": get_num_gen7plus,
+            }
+        )
+
 
         # Set up the grid and schedule.
 
@@ -51,3 +93,4 @@ class ConwaysGameOfLife(Model):
         Have the scheduler advance each cell by one step
         """
         self.schedule.step()
+        self.datacollector.collect(self)
